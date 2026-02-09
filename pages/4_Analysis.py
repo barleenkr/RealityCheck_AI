@@ -4,6 +4,7 @@ with open("styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 from logic.scoring import feasibility_score
+from logic.llm_explainer import explain_feasibility
 
 st.title("Feasibility Analysis")
 
@@ -41,3 +42,30 @@ else:
         st.warning("Moderate feasibility. Adaptations recommended.")
     else:
         st.error("Low feasibility. High risk of treatment dropout.")
+
+    st.divider()
+    st.subheader("AI Explanation")
+
+    if st.button("Explain this feasibility result (AI)"):
+        with st.spinner("Generating explanation using local AI..."):
+            explanation = explain_feasibility(
+                feasibility,
+                patient_risk,
+                treatment_risk,
+                patient,
+                plan
+            )
+
+            st.markdown(
+                f"""
+                <div style="
+                    background:#020617;
+                    padding:20px;
+                    border-radius:14px;
+                    margin-top:10px;
+                ">
+                {explanation}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
